@@ -130,6 +130,47 @@ class ResultSet:
         plt.savefig(topic + "_pie_" + ".png")
         plt.show()
 
+    # 分析武器方式
+    def weapon_pie_beauty(self, topic):
+        """扇形图"""
+        weapon_labels, weapon_counts = self.count_weapen_info()
+        labels = []
+        counts = []
+        for i in range(len(weapon_labels)):
+            if weapon_counts[i] != 0:
+                labels.append(weapon_labels[i])
+                counts.append(weapon_counts[i])
+
+        # 合并小于1%的labels为other
+        other_counts = 0
+        other_labels = []
+        count_sum = sum(counts)
+        for i in range(len(counts)):
+            if counts[i] / count_sum < 0.01:
+                other_counts += counts[i]
+                other_labels.append(labels[i])
+
+        # 绘图
+        pie_labels = []
+        pie_counts = []
+        for i in range(len(counts)):
+            if labels[i] in other_labels:
+                continue
+            pie_labels.append(labels[i])
+            pie_counts.append(counts[i])
+        pie_labels.append("Others")
+        pie_counts.append(other_counts)
+        plt.figure()
+        plt.pie(pie_counts, labels=pie_labels, autopct='%1.2f%%')
+        plt.title(topic)
+        plt.savefig(topic + "_pie_" + ".png")
+        plt.show()
+
+        # 详细打印具体的数量
+        print(topic)
+        for i in range(len(counts)):
+            print(labels[i] + ":" + str(counts[i]))
+
     def further_filter(self, df):
         ds = DataSet(obj_list=self.event_list)
         return ResultSet(ds, df)
@@ -168,10 +209,9 @@ def draft_pie_bar(ds, country=None, targtype1=None, targsubtype1=None, topic=Non
     rs.filter()
     rs.weapon_bar(topic)
     rs.weapon_pie(topic)
+    rs.weapon_pie_beauty(topic)
 
 
-#
-#
 # 运输
 # 攻击方式
 def chain_tran(ds, country):
@@ -296,6 +336,14 @@ def compute_world(ds):
     print("")
 
 
+def world_pie_beauty(ds):
+    df = DataFilter()
+    df.add_filter(lambda x: x['targtype1'] == 19)
+    rs = ResultSet(ds, df)
+    rs.filter()
+    rs.weapon_pie_beauty("worldTranBeauty")
+
+
 if __name__ == "__main__":
     # test('excelData.xlsx')
     file_name = 'excelData.xlsx'
@@ -307,4 +355,3 @@ if __name__ == "__main__":
     compute_france(ds)
     compute_spain(ds)
     compute_world(ds)
-
