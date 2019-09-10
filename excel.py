@@ -74,6 +74,14 @@ class ResultSet:
             if self._df.filter(row):
                 self.event_list.append(row)
 
+    def get_field(self, field):
+        value_list = []
+        for row in self.event_list:
+            if row[field] is not None and row[field] != 0 and row[field] != '':
+                value_list.append(row[field])
+
+        return value_list
+
     def count_kill_and_wound(self):
         wound_count = 0
         kill_count = 0
@@ -110,8 +118,8 @@ class ResultSet:
 
         plt.bar(range(len(counts)), counts, tick_label=labels)
         plt.title(topic)
-        #plt.show()
-        plt.savefig(topic + "_bar_" +  ".png")
+        # plt.show()
+        plt.savefig(topic + "_bar_" + ".png")
         plt.show()
 
     def weapon_pie(self, topic):
@@ -260,7 +268,6 @@ def compute_china(ds):
     bus_event_count, bus_wound_count, bus_kill_count = count_event_wound_kill(ds, country=44, targsubtype1=99)
     draft_pie_bar(ds, country=44, targsubtype1=99, topic="chinaBus")
 
-
     print("")
 
     bus_station_event_count, bus_station_wound_count, bus_station_kill_count \
@@ -274,7 +281,6 @@ def compute_china(ds):
 def compute_america(ds):
     tran_event_count, tran_wound_count, tran_kill_count = count_event_wound_kill(ds, country=217, targtype1=19)
     draft_pie_bar(ds, country=217, targtype1=19, topic="AmericaTran")
-
 
     print("")
 
@@ -344,14 +350,78 @@ def world_pie_beauty(ds):
     rs.weapon_pie_beauty("worldTranBeauty")
 
 
+def china_event_desc(ds):
+    print("chine desc: ")
+    df = DataFilter()
+    df.add_filter(lambda x: x["country"] == 44)
+    df.add_filter(lambda x: x['targtype1'] == 19)
+    rs = ResultSet(ds, df)
+    rs.filter()
+    desc_list = rs.get_field("summary")
+    for i in range(len(desc_list)):
+        print("desc: " + desc_list[i])
+        print()
+    print("count: " + str(len(desc_list)))
+    return desc_list
+
+
+def america_event_desc(ds):
+    print("america desc: ")
+    df = DataFilter()
+    df.add_filter(lambda x: x["country"] == 217)
+    df.add_filter(lambda x: x['targtype1'] == 19)
+    rs = ResultSet(ds, df)
+    rs.filter()
+    desc_list = rs.get_field("summary")
+    for i in range(len(desc_list)):
+        print("desc: " + desc_list[i])
+        print()
+    print("count: " + str(len(desc_list)))
+    return desc_list
+
+
+def france_event_desc(ds):
+    print("france desc: ")
+    df = DataFilter()
+    df.add_filter(lambda x: x["country"] == 69)
+    df.add_filter(lambda x: x['targtype1'] == 19)
+    rs = ResultSet(ds, df)
+    rs.filter()
+    desc_list = rs.get_field("summary")
+    for i in range(len(desc_list)):
+        print("desc: " + desc_list[i])
+        print()
+    print("count: " + str(len(desc_list)))
+    return desc_list
+
+
+def spain_event_desc(ds):
+    print("spain desc: ")
+    df = DataFilter()
+    df.add_filter(lambda x: x["country"] == 185)
+    df.add_filter(lambda x: x['targtype1'] == 19)
+    rs = ResultSet(ds, df)
+    rs.filter()
+    desc_list = rs.get_field("summary")
+    for i in range(len(desc_list)):
+        print("desc: " + desc_list[i])
+        print()
+    print("count: " + str(len(desc_list)))
+    return desc_list
+
+
 if __name__ == "__main__":
     # test('excelData.xlsx')
     file_name = 'excelData.xlsx'
     # china_ten_tran('excelData.xlsx')
     # china_ten_tran_weapon_pie('excelData.xlsx')
     ds = DataSet(file_name)
-    compute_china(ds)
-    compute_america(ds)
-    compute_france(ds)
-    compute_spain(ds)
-    compute_world(ds)
+    # compute_china(ds)
+    # compute_america(ds)
+    # compute_france(ds)
+    # compute_spain(ds)
+    # compute_world(ds)
+    china_event_desc(ds)
+    america_event_desc(ds)
+    france_event_desc(ds)
+    spain_event_desc(ds)
